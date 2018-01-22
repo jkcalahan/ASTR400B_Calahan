@@ -1,5 +1,5 @@
 #Jenny Calahan
-#Jan 16, 2018
+#Jan 22, 2018
 #Astr 400B Homework 2
 
 import numpy as np
@@ -16,8 +16,6 @@ def Read(filename):
     file.close()
     data=np.genfromtxt(filename,dtype=None,names=True,skip_header=3)
     return time,NParticles,data
-
-t,N,d=Read('MW_000.txt')
 
 
     

@@ -1,5 +1,5 @@
 #Jenny Calahan
-#Jan 16, 2018
+#Jan 22, 2018
 #Astr 400B, Hw 2
 
 import numpy as np
