@@ -8,7 +8,7 @@ from ReadFile import *
 
 filename='MW_000.txt'
 
-def ParticleInfo(j,filename):           #Returns distance, velocity, and mass of particle at position 'j'
+def ParticleInfo(j,filename):            #Returns distance, velocity, and mass of particle at position 'j'
     t,N,data=Read('MW_000.txt')
     index=np.where(data['type']==2)      #Only looking at disk stars
     x=data['x'][index]
@@ -23,9 +23,9 @@ def ParticleInfo(j,filename):           #Returns distance, velocity, and mass of
     mass=m[j]*1e10
     return dist,vel,mass
 
-j=101
+j=99
 d,v,ma=ParticleInfo(j,'MW_000.txt')     #find the distance(kpc), velocity(km/s), and mass(M_sun) 
-                                                 #of the 100th particle in 'MW_000.txt'
+                                        #of the 100th particle in 'MW_000.txt'
 dist=np.around(d,3)
 vel=np.around(v,3)
 mass=np.around(ma,3)
@@ -33,9 +33,9 @@ mass=np.around(ma,3)
 distly=u.kpc.to(u.lightyear,value=dist)    #convert kpc to ly
 
 #Print final Results
-print('3D Distance of object %d: %.3f ly'%(j,distly))
-print('3D velocity of object %d: %.3f km/s'%(j,vel))
-print('Mass of object %d: %.3f solar masses'%(j,mass))
+print('3D Distance of object %d: %.3f ly'%(j+1,distly))
+print('3D velocity of object %d: %.3f km/s'%(j+1,vel))
+print('Mass of object %d: %.3f solar masses'%(j+1,mass))
 
 
     
