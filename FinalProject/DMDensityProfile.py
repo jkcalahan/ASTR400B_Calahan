@@ -48,9 +48,9 @@ def ReadMass(snap,limit):
     
     # store distances of particles from COM
     dist=np.sqrt((x-COMP[0])**2+(y-COMP[1])**2+(z-COMP[2])**2)
-            
-    # initilize tot mass of dark matter particles        
-    mass = 0
+    
+    #Initilize total mass
+    mass=0
     
     # 1 particle of dark matter mass (1e10)
     dm_mass = 0.00394985
@@ -61,6 +61,44 @@ def ReadMass(snap,limit):
             mass = mass + dm_mass
                   
     return mass*(1e10)
+
+def Density(snap,limit,steps):
+    #Inputs: snap -- time step we want to study M33 at
+    #        limit -- distance in kpc from the COM that defines the core of M33
+    #        steps -- number of steps to measure density at
+    #
+    #Outputs: density -- array of floats, total dark matter mass/circular volume within limit at each step
+    #         radii -- array of floats, radii at which we found the density
+    #---------------------------------------
+    
+    #Define the step size 
+    stepsize=float(limit)/float(steps)
+    
+    #Define the initial array of density values
+    density=np.zeros(steps)
+    radii=np.zeros(steps)
+    
+    #Initilize location and counter
+    loc=stepsize
+    n=0
+    
+    #Define Volume constants
+    C=(4./3.)*np.pi
+    
+    #Find the density at intervals defined by stepsize
+    while loc < limit:
+        density[n]=ReadMass(snap,loc)/(C*loc**3)
+        radii[n]=loc
+        n+=1
+        loc+=stepsize
+        
+    return density,radii
+    
+    
+    
+    
+    
+    
 
 
 
