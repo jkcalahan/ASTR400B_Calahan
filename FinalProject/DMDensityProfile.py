@@ -5,6 +5,7 @@
 import numpy as np
 from ReadFile import Read
 from CenterofMass import CenterOfMass
+from scipy.optimize import curve_fit
 
 
 #Goals -- as of April 21st:   Find the slope of density profiles at various timesteps
@@ -75,8 +76,8 @@ def Density(snap,limit,steps):
     stepsize=float(limit)/float(steps)
     
     #Define the initial array of density values
-    density=np.zeros(steps)
-    radii=np.zeros(steps)
+    density=np.zeros(steps-1)
+    radii=np.zeros(steps-1)
     
     #Initilize location and counter
     loc=stepsize
@@ -93,6 +94,9 @@ def Density(snap,limit,steps):
         loc+=stepsize
         
     return density,radii
+
+def func(r,a,c):
+    return c*r**a
 
 def Slope(r1,r2,density,radii):
     #Inputs: r1,r2 -- limits, find the slope between r1 and r2, r1 < r2
@@ -113,12 +117,51 @@ def Slope(r1,r2,density,radii):
             sub_radii.append(radii[i])
             sub_density.append(density[i])
             
-    m,b=np.polyfit(sub_radii,sub_density,1)
+    popt,pcov=curve_fit(func, sub_radii, sub_density)
+    
+    return popt
     
     
+def ArrayofSlopes(s1,s2,numb,limit,steps): 
+    #Inputs: s1,s2 -- two snap numbers to find the power-law fluxuations of between
+    #        numb -- number of power-laws to calculate between s1 and s2
+    #        limit -- distance in kpc from the COM that defines the core of M33
+    #        steps -- number of steps to measure density at
+    #
+    #Outputs: slopes -- array of slopes
+    #         time -- array of times that correspond to each slope
+    #         
+    #---------------------------------------
     
+    #Initilize array of power-law values and time values
+    slopes=np.zeros(numb+1)
+    time=np.zeros(numb+1)
+    snaps=[]
     
+    #time intervals to examine the power-law value
+    step=(s2-s1)/numb
     
+    #Create a list of snap numbers
+    s=s1
+    while s<=s2:
+        snaps.append(s)
+        s=int(step+s)
+    
+    #Create array of times from snap numbers
+    snapsarray=np.asarray(snaps)
+    time=(snapsarray*3)/200
+    #Initilize a counter
+    i=0
+    
+    #Find the power-law values at snap numbers between s1 and s2
+    while i <= numb:
+        density,radii = Density(snaps[i],limit,steps)
+        a=Slope(0,limit,density,radii)
+        slopes[i]=a[0]
+        #time[i]=(snaps[i]*3)/200
+        i+=1
+        
+    return slopes,time
     
 
 
