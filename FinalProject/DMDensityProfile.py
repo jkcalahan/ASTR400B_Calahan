@@ -7,10 +7,10 @@ from ReadFile import Read
 from CenterofMass import CenterOfMass
 
 
-#Goals -- as of April 4th: create a density profile at snap 0000, determine its slope
-#                          find a way to repeat that for different snaps and plot that slope value at each point
-#      Functions to create:   DensProf --> outputs array of mass values at different radii, and array of radii
-#                             Slope --> ouputs the slope values of density profile 
+#Goals -- as of April 21st:   Find the slope of density profiles at various timesteps
+#                          
+#      Functions to create:   Slope --> ouputs the slope values of density profile
+#  
 
 #read in M31 dark matter particles with in 20 kpc
 
@@ -28,7 +28,7 @@ def ReadMass(snap,limit):
     ilbl = ilbl[-3:]
     # create filenames
     filename='%s_'%('M33') + ilbl + '.txt'
-    path='/home/jcalahan/VLowRes/'+filename
+    path='/home/jcalahan/HighRes/'+filename
 
     # read in the file 
     time, total, data = Read(path)
@@ -46,14 +46,14 @@ def ReadMass(snap,limit):
     COM = CenterOfMass(path,1)
     COMP = COM.COM_P(.2,4.0)           #<--using values from HW6
     
-    # store distances of particles from COM
+    # store distances of particles from COM (array)
     dist=np.sqrt((x-COMP[0])**2+(y-COMP[1])**2+(z-COMP[2])**2)
     
     #Initilize total mass
     mass=0
     
-    # 1 particle of dark matter mass (1e10)
-    dm_mass = 0.00394985
+    # 1 particle of dark matter mass (assuming all dark matter particles have the same mass)
+    dm_mass = m[0]
     
     #if a particle is within the limit, add a dark matter mass to total mass
     for d in dist:
@@ -93,6 +93,27 @@ def Density(snap,limit,steps):
         loc+=stepsize
         
     return density,radii
+
+def Slope(r1,r2,density,radii):
+    #Inputs: r1,r2 -- limits, find the slope between r1 and r2, r1 < r2
+    #        density -- an array of density values as calculated from Density
+    #        radii -- an array of radii values as calculated from Density (same size as 'density' array)
+    #
+    #Outputs: slope -- slope value from a linar fit
+    #         
+    #---------------------------------------
+    
+    #Initialize lists that will contain the sub group of radii and densities that we want to find the slope of
+    sub_radii=[]
+    sub_density=[]
+    
+    #Find radii and density that are within r1 and r2
+    for i in range(len(density)):
+        if radii[i] >= r1 and radii[i] <= r2:
+            sub_radii.append(radii[i])
+            sub_density.append(density[i])
+            
+    m,b=np.polyfit(sub_radii,sub_density,1)
     
     
     
