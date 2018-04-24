@@ -95,7 +95,7 @@ def Density(snap,limit,steps):
         
     return density,radii
 
-def func(r,a,c):
+def func(r,a,c,d):
     return c*r**a
 
 def Slope(r1,r2,density,radii):
@@ -156,7 +156,7 @@ def ArrayofSlopes(s1,s2,numb,limit,steps):
     #Find the power-law values at snap numbers between s1 and s2
     while i <= numb:
         density,radii = Density(snaps[i],limit,steps)
-        a=Slope(0,limit,density,radii)
+        a=Slope(0.6,limit,density,radii)
         slopes[i]=a[0]
         #time[i]=(snaps[i]*3)/200
         i+=1
