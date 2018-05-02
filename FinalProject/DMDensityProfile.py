@@ -4,6 +4,7 @@
 
 import numpy as np
 from ReadFile import Read
+import astropy.units as u
 from CenterofMass import CenterOfMass
 from scipy.optimize import curve_fit
 
@@ -43,9 +44,12 @@ def ReadMass(snap,limit):
     y = data['y'][index]
     z = data['z'][index]
     
-    #Find COM postion of dark matter particles
-    COM = CenterOfMass(path,1)
+    #Find COM postion of disk particles --> center of the galaxy
+    COM = CenterOfMass(path,2)
     COMP = COM.COM_P(.2,4.0)           #<--using values from HW6
+    
+    #Define the time this snap is at
+    t=time/u.Myr/1000.   #Gyr
     
     # store distances of particles from COM (array)
     dist=np.sqrt((x-COMP[0])**2+(y-COMP[1])**2+(z-COMP[2])**2)
@@ -61,7 +65,7 @@ def ReadMass(snap,limit):
         if d <= limit:
             mass = mass + dm_mass
                   
-    return mass*(1e10)
+    return mass*(1e10),t
 
 def Density(snap,limit,steps):
     #Inputs: snap -- time step we want to study M33 at
@@ -88,12 +92,13 @@ def Density(snap,limit,steps):
     
     #Find the density at intervals defined by stepsize
     while loc < limit:
-        density[n]=ReadMass(snap,loc)/(C*loc**3)
+        m,t=ReadMass(snap,loc)
+        density[n]=m/(C*loc**3)
         radii[n]=loc
         n+=1
         loc+=stepsize
         
-    return density,radii
+    return density,radii,t
 
 def func(r,a,c,d):
     return c*r**a
@@ -147,18 +152,15 @@ def ArrayofSlopes(s1,s2,numb,limit,steps):
         snaps.append(s)
         s=int(step+s)
     
-    #Create array of times from snap numbers
-    snapsarray=np.asarray(snaps)
-    time=(snapsarray*3)/200
     #Initilize a counter
     i=0
     
     #Find the power-law values at snap numbers between s1 and s2
     while i <= numb:
-        density,radii = Density(snaps[i],limit,steps)
+        density,radii,t = Density(snaps[i],limit,steps)
         a=Slope(0.6,limit,density,radii)
         slopes[i]=a[0]
-        #time[i]=(snaps[i]*3)/200
+        time[i]=t
         i+=1
         
     return slopes,time

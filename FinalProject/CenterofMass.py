@@ -62,7 +62,7 @@ class CenterOfMass:
 
         # Center of Mass Position
         ###########################
-
+        
         # Try a first guess at the COM position by calling COMdefine
         XCOM, YCOM, ZCOM = self.COMdefine(self.x,self.y,self.z,self.m)
         # compute the magnitude of the COM position vector. 
